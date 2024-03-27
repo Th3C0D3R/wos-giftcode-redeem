@@ -4,10 +4,21 @@ import { sql } from "@vercel/postgres";
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     var data = req.query;
     if (data["id"] === undefined && data["ids"] === undefined) return res.json({ status: 500, data: "NO PLAYER ID" });
+    
     if (data["ids"] !== undefined) {
         var ids = JSON.parse(data["ids"] as string);
-        console.log(ids);
-        return res.json({ status: 200, data: `tmp` });
+        for (let i = 0; i < ids.length; i++) {
+            await sql`INSERT INTO ids (id)
+            SELECT ${ids[i]}
+            FROM ids
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM ids
+                WHERE id = ${ids[i]}
+            );`;
+        }
+       
+        return res.json({ status: 200, data: `IDs added` });
     } else {
         var idToAdd = data["id"] as string;
         const idsRow = await sql`SELECT id FROM ids WHERE id = ${idToAdd};`;
