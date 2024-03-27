@@ -35,6 +35,17 @@ export const getPlayerInfo = async (opt: any) => {
                 data: {
                     embeds: {
                         title: "User found!",
+                        author: {
+                            name: "WOS Player Searcher"
+                        },
+                        description: "I found the player you are searching for:"
+                    }
+                }
+            }
+            /*
+data: {
+                    embeds: {
+                        title: "User found!",
                         thumbnail: {
                             url: data["avatar_image"] ?? "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png",
                             height: 256,
@@ -67,10 +78,9 @@ export const getPlayerInfo = async (opt: any) => {
                             },
 
                         ]
-                    },
-                    flags: InteractionResponseFlags.EPHEMERAL
+                    }
                 }
-            }
+            */
             
             return resIn;
         } 
