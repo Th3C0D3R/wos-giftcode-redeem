@@ -29,10 +29,16 @@
                         spanSuccess.value = x["data"];
                         btn.removeAttribute("disabled");
                     }
+                    else if(x["status"] && x["status"] === 302){
+                        spanFail.style["visibility"] = "hidden";
+                        spanSuccess.style["visibility"] = "visible";
+                        spanSuccess.innerText = x["data"];
+                        btn.removeAttribute("disabled");
+                    }
                     else{
                         spanSuccess.style["visibility"] = "hidden";
                         spanFail.style["visibility"] = "visible";
-                        spanFail.value = x["data"];
+                        spanFail.innerText = x["data"];
                         btn.removeAttribute("disabled");
                     }
                 });
