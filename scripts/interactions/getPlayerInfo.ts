@@ -2,10 +2,9 @@ import { InteractionResponseFlags } from "discord-interactions";
 import { Md5 } from 'ts-md5'
 
 export const getPlayerInfo = async (opt: any) => {
-    const idString = opt?.options[0]?.value as string ?? "";
-    console.log(opt.options);
+    const id = opt?.options[0]?.value ?? 0;
     var time = Date.now();
-    var sig1 = Md5.hashStr(`fid=${idString}&time=${time}tB87#kPtkxqOS2`);
+    var sig1 = Md5.hashStr(`fid=${id}&time=${time}tB87#kPtkxqOS2`);
     var response = await fetch("https://wos-giftcode-api.centurygame.com/api/player", {
         "credentials": "omit",
         "headers": {
@@ -21,16 +20,15 @@ export const getPlayerInfo = async (opt: any) => {
             "Cache-Control": "no-cache"
         },
         "referrer": "https://wos-giftcode.centurygame.com/",
-        "body": `sign=${sig1}&fid=${idString}&time=${time}`,
+        "body": `sign=${sig1}&fid=${id}&time=${time}`,
         "method": "POST",
         "mode": "cors"
     });
-    if (response.status == 200){
+    if (response.status == 200) {
         var resJ = await response.json();
         let data = resJ.data;
-        console.log(data);
-        if (data["fid"] == idString) {
-            return {
+        if (data["fid"] == id) {
+            var resIn = {
                 type: 4,
                 data: {
                     embeds: {
@@ -48,7 +46,7 @@ export const getPlayerInfo = async (opt: any) => {
                         fields: [
                             {
                                 name: "PlayerID",
-                                value: idString,
+                                value: id,
                                 inline: true,
                             },
                             {
@@ -63,17 +61,19 @@ export const getPlayerInfo = async (opt: any) => {
                             },
                             {
                                 name: "Furnace Level",
-                                value: (data["stove_lv"] > 30 ? `FC ${(data["stove_lv"]-30)/5}` : data["stove_lv"]) ?? "-----",
+                                value: (data["stove_lv"] > 30 ? `FC ${(data["stove_lv"] - 30) % 5}` : data["stove_lv"]) ?? "-----",
                                 inline: true,
                             },
-    
+
                         ]
                     },
                     flags: InteractionResponseFlags.EPHEMERAL
                 }
             }
-        }
-        return {
+            console.log(resIn);
+            return resIn;
+        } 
+        var resInNF = {
             type: 4,
             data: {
                 embeds: {
@@ -90,13 +90,15 @@ export const getPlayerInfo = async (opt: any) => {
                     description: "I did not found any player with this ID",
                     fields: {
                         name: "PlayerID:",
-                        value: idString
+                        value: id
                     }
                 },
                 flags: InteractionResponseFlags.EPHEMERAL
             }
         }
-    } 
+        console.log(resInNF);
+        return resInNF
+    }
     console.log(await response.json());
     return {
         type: 4,
