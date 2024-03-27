@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteout Survival - Massive Code Redeem</title>
+</head>
+
+<body>
+    <script>
+        function sendID() {
+            var btn = document.getElementById("SendID");
+            btn.setAttribute("disabled", "disabled");
+            var spanFail = document.getElementById("fail");
+            var spanSuccess = document.getElementById("success");
+            var id = document.getElementById("PlayerID").value;
+            fetch("https://wgr.vercel.app/api/sendid?id=" + id).then(res => {
+                res.json().then( x => {
+                    if(x["status"] && x["status"] === 500){
+                        spanSuccess.style["visibility"] = "hidden";
+                        spanFail.style["visibility"] = "visible";
+                        spanFail.value = x["data"];
+                        btn.removeAttribute("disabled");
+                    }
+                    else if(x["status"] && x["status"] === 200){
+                        spanFail.style["visibility"] = "hidden";
+                        spanSuccess.style["visibility"] = "visible";
+                        spanSuccess.value = x["data"];
+                        btn.removeAttribute("disabled");
+                    }
+                    else{
+                        spanSuccess.style["visibility"] = "hidden";
+                        spanFail.style["visibility"] = "visible";
+                        spanFail.value = x["data"];
+                        btn.removeAttribute("disabled");
+                    }
+                });
+            });
+        }
+    </script>
+
+    <h1 style="text-align: center;"><strong>Whiteout Survival - Massive GiftCode Redeem</strong></h1>
+    <p>&nbsp;</p>
+    <h2 style="text-align: center;"><span style="text-decoration: underline;">How to use:</span></h2>
+    <h3 style="text-align: center;">There are two modes:</h3>
+    <h3 style="text-align: center;">- Per ID &amp; GiftCode</h3>
+    <h3 style="text-align: center;">- Via ID List</h3>
+    <p>&nbsp;</p>
+    <h3 style="text-align: center;">Use the following URL to activate the Code with one ID:</h3>
+    <h3 style="text-align: center;">(REPLACE THE {ID} AND THE {CODE} WITH YOU DATA)<br /><span
+            style="color: #3366ff;">https://wgr.vercel.app/api/redeem?id={ID}&amp;code={CODE}</span></h3>
+    <p>&nbsp;</p>
+    <h2 style="text-align: center;"><span style="color:red">OR (not both)</span></h2>
+    <p>&nbsp;</p>
+    <h3 style="text-align: center;">Use the next form to send you ID</h3>
+    <h3 style="text-align: center;">It will be noted down, I will add you on the List and as soon as a new GiftCode is available</h3>
+    <h3 style="text-align: center;">everyone on that List will get the GiftCode redeemed</h3>
+    <p style="text-align: center;">
+        <span id="success" style="visibility: hidden; color: #339966;">ID successfull added!</span>
+        <span id="fail" style="visibility: hidden; color: #ff0000;">Mission failed!</span>
+    </p>
+    <p style="text-align: center;">
+        <label for="PlayerID">Your Player ID:</label>
+        <input type="number" name="PlayerID" access="false" id="PlayerID">
+        <button type="button" access="false" id="SendID" onclick="sendID()">Send ID</button>
+    </p>
+</body>
+
+</html>
