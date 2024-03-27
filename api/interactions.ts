@@ -7,6 +7,7 @@ import {
 import { ValidationException, UnhandledData } from '../utils/exceptions'
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
+import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
 
 const verifySig = async (body: any, header: IncomingHttpHeaders) => {
     const sig = header["x-signature-ed25519"] as string;
@@ -28,6 +29,8 @@ const handleResponse = async (body: any) => {
         switch (name) {
             case "addplayer":
                 return await AddPlayer(data);
+            case "playerinfo":
+                return await getPlayerInfo(data);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
         }
@@ -35,13 +38,11 @@ const handleResponse = async (body: any) => {
 }
 
 export default async function POST(req: VercelRequest, res: VercelResponse) {
-    try 
-    {
+    try {
         await verifySig(req.body, req.headers);
         return res.json(await handleResponse(req.body));
 
-    } catch (e: any) 
-    {
+    } catch (e: any) {
         console.error("Error found: ", e?.message);
         if (e.errorType === "Validation" || e.errorType === "UnhandledData") {
             res.status = e.status;
