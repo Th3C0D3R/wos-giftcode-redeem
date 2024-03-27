@@ -35,10 +35,37 @@ export const getPlayerInfo = async (opt: any) => {
                 data: {
                     embeds: [{
                         title: "User found!",
+                        thumbnail: {
+                            url: data["avatar_image"] ?? "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png",
+                            height: 256,
+                            width: 256
+                        },
                         author: {
                             name: "WOS Player Searcher"
                         },
-                        description: "I found the player you are searching for:"
+                        description: "I found the player you are searching for:",
+                        fields: [
+                            {
+                                name: "PlayerID",
+                                value: id as string,
+                                inline: true,
+                            },
+                            {
+                                name: "Nickname",
+                                value: data["nickname"] ?? "-----",
+                                inline: true,
+                            },
+                            {
+                                name: "State",
+                                value: data["kid"] as string ?? "-----",
+                                inline: true,
+                            },
+                            {
+                                name: "Furnace Level",
+                                value: (data["stove_lv"] > 30 ? `FC ${Math.floor((data["stove_lv"] - 30) / 5)}` : data["stove_lv"]) ?? "-----",
+                                inline: true,
+                            }
+                        ]
                     }]
                 }
             }
