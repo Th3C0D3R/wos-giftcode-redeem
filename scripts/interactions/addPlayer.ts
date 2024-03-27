@@ -1,9 +1,12 @@
-export const AddPlayer = async(opt)=>{
-    console.log(opt?.options);
+export const AddPlayer = async(opt: any)=>{
+    const idsString = opt?.options[0]?.value as string ?? "";
+    const ids = idsString.split(";") ?? [];
+
+    await fetch("https://wgr.vercel.app/api/sendid?ids=" + JSON.stringify(ids));
     return {
         type:4,
         data:{
-            content: 'Hello'
+            content: 'ID(s) added'
         }
     }
     /* fetch("https://wgr.vercel.app/api/sendid?id=" + id).then(res => {
