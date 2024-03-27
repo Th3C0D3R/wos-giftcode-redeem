@@ -3,7 +3,7 @@ import { Md5 } from 'ts-md5'
 
 export const getPlayerInfo = async (opt: any) => {
     const idString = opt?.options[0]?.value as string ?? "";
-
+    console.log(opt.options);
     var time = Date.now();
     var sig1 = Md5.hashStr(`fid=${idString}&time=${time}tB87#kPtkxqOS2`);
     var response = await fetch("https://wos-giftcode-api.centurygame.com/api/player", {
@@ -28,6 +28,7 @@ export const getPlayerInfo = async (opt: any) => {
     if (response.status == 200){
         var resJ = await response.json();
         let data = resJ.data;
+        console.log(data);
         if (data["fid"] == idString) {
             return {
                 type: 4,
@@ -96,6 +97,7 @@ export const getPlayerInfo = async (opt: any) => {
             }
         }
     } 
+    console.log(await response.json());
     return {
         type: 4,
         data: {
