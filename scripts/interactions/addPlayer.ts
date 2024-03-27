@@ -1,3 +1,5 @@
+import { InteractionResponseFlags, InteractionResponseType } from "discord-interactions";
+
 export const AddPlayer = async(opt: any)=>{
     const idsString = opt?.options[0]?.value as string ?? "";
     const ids = idsString.split(";") ?? [];
@@ -9,7 +11,7 @@ export const AddPlayer = async(opt: any)=>{
         type:4,
         data:{
             content: result["data"] ?? 'Failed to add IDs', 
-            ephemeral: true            
+            flags: InteractionResponseFlags.EPHEMERAL            
         }
     }
 }
