@@ -4,10 +4,9 @@ interface RedeemResponse { text: string, code: number }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
     var data = req.query;
-    var idURL = "https://raw.githubusercontent.com/Th3C0D3R/wos-gift-redeem/main/ids.json";
     if (data["code"] === undefined) return res.json({ message: "NO CODE" });
     const myPromise = new Promise(async (resolve, reject) => {
-        var resp = await fetch(idURL);
+        var resp = await fetch("https://wgr.vercel.app/api/getIDs");
         var proms = new Set();
         resp = await resp.json();
         if (resp["ids"] === undefined) {
