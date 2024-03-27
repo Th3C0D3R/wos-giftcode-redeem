@@ -33,13 +33,13 @@ export const getPlayerInfo = async (opt: any) => {
             var resIn = {
                 type: 4,
                 data: {
-                    embeds: {
+                    embeds: [{
                         title: "User found!",
                         author: {
                             name: "WOS Player Searcher"
                         },
                         description: "I found the player you are searching for:"
-                    }
+                    }]
                 }
             }
             /*
