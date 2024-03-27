@@ -1,12 +1,14 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+
 const discordHeaders = {
     Authorization: `Bot ${process.env.PRIVATE_DISCORD_BOT_TOKEN}`
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     const url = `https://discord.com/api/v10/applications/${process.env.PRIVATE_DISCORD_ID}/commands`;
-    const data = [
+    var data = [] as Array<any>;
+    data = [
         {
             name: "addplayer",
             type: 1,
@@ -29,13 +31,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 {
                     "name": "id",
                     "description": "the player-id you want the info",
-                    "type": 3,
-                    "required": true,
-                    "max_length": 12
+                    "type": 4,
+                    "required": true
                 }
             ]
         },
-    ]
+    ];
 
     const response = await fetch(url, {
         method: "POST",
