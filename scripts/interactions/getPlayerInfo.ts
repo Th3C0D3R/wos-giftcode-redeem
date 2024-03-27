@@ -27,8 +27,6 @@ export const getPlayerInfo = async (opt: any) => {
     if (response.status == 200) {
         var resJ = await response.json();
         let data = resJ.data;
-        console.log(typeof data["fid"]);
-        console.log(typeof id);
         if (data["fid"] == id) {
             var resIn = {
                 type: 4,
@@ -43,6 +41,7 @@ export const getPlayerInfo = async (opt: any) => {
                         author: {
                             name: "WOS Player Searcher"
                         },
+                        color:6618880,
                         description: "I found the player you are searching for:",
                         fields: [
                             {
@@ -66,55 +65,16 @@ export const getPlayerInfo = async (opt: any) => {
                                 inline: true,
                             }
                         ]
-                    }]
+                    }],
+                    flags: InteractionResponseFlags.EPHEMERAL
                 }
             }
-            /*
-data: {
-                    embeds: {
-                        title: "User found!",
-                        thumbnail: {
-                            url: data["avatar_image"] ?? "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png",
-                            height: 256,
-                            width: 256
-                        },
-                        author: {
-                            name: "WOS Player Searcher"
-                        },
-                        description: "I found the player you are searching for:",
-                        fields: [
-                            {
-                                name: "PlayerID",
-                                value: id as string,
-                                inline: true,
-                            },
-                            {
-                                name: "Nickname",
-                                value: data["nickname"] ?? "-----",
-                                inline: true,
-                            },
-                            {
-                                name: "State",
-                                value: data["kid"] as string ?? "-----",
-                                inline: true,
-                            },
-                            {
-                                name: "Furnace Level",
-                                value: (data["stove_lv"] > 30 ? `FC ${Math.floor((data["stove_lv"] - 30) / 5)}` : data["stove_lv"]) ?? "-----",
-                                inline: true,
-                            },
-
-                        ]
-                    }
-                }
-            */
-            
             return resIn;
         } 
         var resInNF = {
             type: 4,
             data: {
-                embeds: {
+                embeds: [{
                     title: "User not found",
                     thumbnail: {
                         url: "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png",
@@ -124,12 +84,13 @@ data: {
                     author: {
                         name: "WOS Player Searcher"
                     },
+                    color:16731392,
                     description: "I did not found any player with this ID",
                     fields: {
                         name: "PlayerID:",
                         value: id as string
                     }
-                },
+                }],
                 flags: InteractionResponseFlags.EPHEMERAL
             }
         }
@@ -150,6 +111,7 @@ data: {
                 author: {
                     name: "WOS Player Searcher"
                 },
+                color:16731392,
                 description: "Problem in the execution of the command",
                 fields: {
                     name: "Response:",
