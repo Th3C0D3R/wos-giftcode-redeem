@@ -34,7 +34,7 @@ export const getPlayerInfo = async (opt: any) => {
                 type: 4,
                 data: {
                     embeds: {
-                        title: "User not found",
+                        title: "User found!",
                         thumbnail: {
                             url: data["avatar_image"] ?? "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/default-avatar.png",
                             height: 256,
@@ -43,12 +43,11 @@ export const getPlayerInfo = async (opt: any) => {
                         author: {
                             name: "WOS Player Searcher"
                         },
-                        color: 39423,
                         description: "I found the player you are searching for:",
                         fields: [
                             {
                                 name: "PlayerID",
-                                value: id,
+                                value: id as string,
                                 inline: true,
                             },
                             {
@@ -58,12 +57,12 @@ export const getPlayerInfo = async (opt: any) => {
                             },
                             {
                                 name: "State",
-                                value: data["kid"] ?? "-----",
+                                value: data["kid"] as string ?? "-----",
                                 inline: true,
                             },
                             {
                                 name: "Furnace Level",
-                                value: (data["stove_lv"] > 30 ? `FC ${(data["stove_lv"] - 30) % 5}` : data["stove_lv"]) ?? "-----",
+                                value: (data["stove_lv"] > 30 ? `FC ${Math.floor((data["stove_lv"] - 30) / 5)}` : data["stove_lv"]) ?? "-----",
                                 inline: true,
                             },
 
@@ -88,11 +87,10 @@ export const getPlayerInfo = async (opt: any) => {
                     author: {
                         name: "WOS Player Searcher"
                     },
-                    color: 16729600,
                     description: "I did not found any player with this ID",
                     fields: {
                         name: "PlayerID:",
-                        value: id
+                        value: id as string
                     }
                 },
                 flags: InteractionResponseFlags.EPHEMERAL
@@ -115,7 +113,6 @@ export const getPlayerInfo = async (opt: any) => {
                 author: {
                     name: "WOS Player Searcher"
                 },
-                color: 16729600,
                 description: "Problem in the execution of the command",
                 fields: {
                     name: "Response:",
