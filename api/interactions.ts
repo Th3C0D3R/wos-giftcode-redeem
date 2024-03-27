@@ -40,7 +40,9 @@ const handleResponse = async (body: any) => {
 export default async function POST(req: VercelRequest, res: VercelResponse) {
     try {
         await verifySig(req.body, req.headers);
-        return res.json(await handleResponse(req.body));
+        var ret = await handleResponse(req.body)
+        console.log(JSON.stringify(ret));
+        return res.json(ret);
 
     } catch (e: any) {
         console.error("Error found: ", e?.message);

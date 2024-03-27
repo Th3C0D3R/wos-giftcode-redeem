@@ -27,6 +27,8 @@ export const getPlayerInfo = async (opt: any) => {
     if (response.status == 200) {
         var resJ = await response.json();
         let data = resJ.data;
+        console.log(typeof data["fid"]);
+        console.log(typeof id);
         if (data["fid"] == id) {
             var resIn = {
                 type: 4,
@@ -70,7 +72,7 @@ export const getPlayerInfo = async (opt: any) => {
                     flags: InteractionResponseFlags.EPHEMERAL
                 }
             }
-            console.log(resIn);
+            
             return resIn;
         } 
         var resInNF = {
