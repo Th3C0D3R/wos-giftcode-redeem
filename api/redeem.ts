@@ -27,7 +27,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (redeem.toLowerCase() === "success".toLowerCase()) {
       msg.push({ text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 2 });
     }
-    return res.json({ text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
+    msg.push({ text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
   }
   msg.push({ text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3 });
 
