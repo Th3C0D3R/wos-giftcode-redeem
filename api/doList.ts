@@ -30,10 +30,10 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
             var rp: RedeemResponse[] = []
             rp = pr.data.filter(m=>m["id"] === "redeem");
             if(debug){
-                Debugstring += `${JSON.stringify(pr)}<br>`;
+                Debugstring += `${JSON.stringify(rp)} ==> ${rp["code"]} ${typeof rp["code"]}<br>`;
             }
             if (isType<RedeemResponse>(rp)) {
-                switch (rp.code) {
+                switch (rp["code"]) {
                     case 1:
                     case 2:
                         success.push(rp);
