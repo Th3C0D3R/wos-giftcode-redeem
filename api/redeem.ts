@@ -1,6 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { Md5 } from 'ts-md5'
 
+enum CODE {
+  TIMEOUT = "timeout retry.",
+  RECEIVED = "received.",
+  SUCCESS = "success"
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   var useIDList = false;
   var data = req.query;
@@ -13,9 +19,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   var msg: object[] = [];
   var log = await login(playerID);
 
-  if (log["msg"]?.toLowerCase() !== "success".toLowerCase()) {
+  if (log["msg"]?.toLowerCase() !== CODE.SUCCESS) {
 
-    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 1 });
+    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5 });
 
   } else {
 
@@ -23,19 +29,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3 });
 
     var redeem = await redeemCode(playerID, code);
-    if (redeem.toLowerCase() === "timeout retry".toLowerCase()) {
+
+    if (redeem.toLowerCase() === CODE.TIMEOUT) {
       redeem = await redeemCode(playerID, code);
-      if (redeem.toLowerCase() !== "success".toLowerCase()) {
-        msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 5 });
+
+      if (redeem.toLowerCase() === CODE.SUCCESS) {
+        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 1 })
+      }
+      else if (redeem.toLowerCase() === CODE.RECEIVED) {
+        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
       }
       else {
-        msg.push({ id: "redeem", text: `1. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 1 });
+        msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 5 });
       }
     }
-    else if (redeem.toLowerCase() === "success".toLowerCase()) {
+    else if (redeem.toLowerCase() === CODE.SUCCESS) {
       msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 2 });
     }
-    else msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
+    else {
+      msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
+    }
   }
 
   if (useIDList) {

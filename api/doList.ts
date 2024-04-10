@@ -32,19 +32,19 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
             if(debug){
                 Debugstring += `${JSON.stringify(pr)}<br>`;
             }
-            if (isType<RedeemResponse>(pr)) {
-                switch (pr.code) {
+            if (isType<RedeemResponse>(rp)) {
+                switch (rp.code) {
                     case 1:
                     case 2:
-                        success.push(pr);
+                        success.push(rp);
                         break;
                     case 4:
-                        received.push(pr);
+                        received.push(rp);
                         break;
                     case 3:
                     case 5:
                     default:
-                        failed.push(pr);
+                        failed.push(rp);
                         break;
                 }
             }
