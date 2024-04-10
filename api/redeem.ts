@@ -34,7 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (useIDList) {
     return res.json({ data: msg });
   }
-  return res.json({ message: msg.join("\n") });
+  return res.json({ message: msg.map(m => m["text"]??"").join("\n") });
 
   async function login(id: string): Promise<string> {
     var time = Date.now();
