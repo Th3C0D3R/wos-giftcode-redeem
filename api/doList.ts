@@ -27,8 +27,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         var success: RedeemResponse[] = [], failed: RedeemResponse[] = [], received: RedeemResponse[] = [];
         var Debugstring = "";
         r.forEach(pr=> {
-            var rp: RedeemResponse[] = []
-            rp = pr.data.filter(m=>m["id"] === "redeem");
+            var rp: RedeemResponse = pr.data.filter(m=>m["id"] === "redeem")[0] ?? pr.data.filter(m=>m["id"] === "login")[0];
             if(debug){
                 Debugstring += `${JSON.stringify(rp)} ==> ${rp["code"]} ${typeof rp["code"]}<br>`;
             }
