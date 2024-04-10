@@ -12,29 +12,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   var code = data["code"].toString();
   var msg: object[] = [];
   var log = await login(playerID);
-  if (log["msg"]?.toLowerCase() === "success".toLowerCase()) {
+
+  if (log["msg"]?.toLowerCase() !== "success".toLowerCase()) {
+
+    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 1 });
+
+  } else {
+
     console.log(`${log["data"]["nickname"]} (${log["data"]["fid"]} | ${log["data"]["kid"]})`);
+    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3 });
+
     var redeem = await redeemCode(playerID, code);
     if (redeem.toLowerCase() === "timeout retry".toLowerCase()) {
       redeem = await redeemCode(playerID, code);
       if (redeem.toLowerCase() !== "success".toLowerCase()) {
-        msg.push({ text: `2. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 5 });
+        msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 5 });
       }
-      else{
-        msg.push({ text: `1. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 1 });
+      else {
+        msg.push({ id: "redeem", text: `1. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 1 });
       }
     }
-    if (redeem.toLowerCase() === "success".toLowerCase()) {
-      msg.push({ text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 2 });
+    else if (redeem.toLowerCase() === "success".toLowerCase()) {
+      msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 2 });
     }
-    msg.push({ text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
+    else msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
   }
-  msg.push({ text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3 });
 
   if (useIDList) {
     return res.json({ data: msg });
   }
-  return res.json({ message: msg.map(m => m["text"]??"").join("\n") });
+  return res.json({ message: msg.map(m => m["text"] ?? "").join("\n") });
 
   async function login(id: string): Promise<string> {
     var time = Date.now();
