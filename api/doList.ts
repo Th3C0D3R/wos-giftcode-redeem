@@ -4,6 +4,8 @@ interface RedeemResponse { text: string, code: number }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
     var data = req.query;
+    var debug = false
+    if (data["debug"] !== undefined) debug = true;
     if (data["code"] === undefined) return res.json({ message: "NO CODE" });
     const myPromise = new Promise(async (resolve, reject) => {
         var resp = await fetch("https://wgr.vercel.app/api/getIDs");
@@ -22,7 +24,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         }
         var r = await Promise.all(proms);
         var success: RedeemResponse[] = [], failed: RedeemResponse[] = [], received: RedeemResponse[] = [];
+        var Debugstring = "";
         r.forEach(pr => {
+            if(debug){
+                Debugstring += `${JSON.stringify(pr)}<br>`;
+            }
             if (isType<RedeemResponse>(pr)) {
                 switch (pr.code) {
                     case 1:
@@ -40,7 +46,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
                 }
             }
         });
-        resolve(`'${data["code"]}' redeemed for ${ids.length} Players results in:<br><br>${success.length} Successfull<br>${received.length} Already received<br>${failed.length} Failed redemptions`);
+        resolve(`'${data["code"]}' redeemed for ${ids.length} Players results in:<br><br>${success.length} Successfull<br>${received.length} Already received<br>${failed.length} Failed redemptions${debug ? (`<br><br>${Debugstring}`) : ""}`);
     });
     myPromise.then(d => {
         return res.send(d)
