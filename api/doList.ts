@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 interface RedeemResponse { text: string, code: number }
+interface Data { data: RedeemResponse[] }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
     var data = req.query;
@@ -22,11 +23,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
             let p = fetchPlayerRedeems<RedeemResponse>(`https://wgr.vercel.app/api/redeem?id=${playerID}&code=${code}&useList=1`);
             proms.add(p);
         }
-        var r = await Promise.all(proms);
+        var r:Data[]  = await Promise.all(proms) as Data[];
         var success: RedeemResponse[] = [], failed: RedeemResponse[] = [], received: RedeemResponse[] = [];
         var Debugstring = "";
-        r.forEach(pr => {
-            pr = (pr as Array<RedeemResponse>).filter(m=>m["id"] === "redeem");
+        r.forEach(pr=> {
+            var rp: RedeemResponse[] = []
+            rp = pr.data.filter(m=>m["id"] === "redeem");
             if(debug){
                 Debugstring += `${JSON.stringify(pr)}<br>`;
             }
