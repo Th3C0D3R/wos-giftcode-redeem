@@ -1,78 +1,65 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import puppeteer, { Browser } from 'puppeteer-core';
+import edgeChromium from 'chrome-aws-lambda';
+
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.json({ message: "WIP" });
-    const getHighestQualityURL = (arrQ, arrU) => {
-        return arrU[arrQ.indexOf(Math.max(...arrQ).toString())];
-    };
+
     var data = req.query;
     var isP = false;
+
     if (data["url"] === undefined) return res.json({ message: "NO URL" });
     if (data["p"] !== undefined) isP = true;
+
+    const url = data["url"].toString();
     const urlBase = isP ? "https://yesdownloader.com/" : "https://www.downloader.wiki/";
-    const convertRoute = isP ? "en1/convert/" : "convert/";
-    const ref = isP ? `${urlBase}en1/` : `${urlBase}?err=dmFyOmVycl9lbnRlcl91cmw`;
-    const durl = isP ? `url=${encodeURI(data["url"].toString())}&submitForm=` : `from=all&url=${encodeURI(data["url"].toString())}`;
-    const regExU = isP ? /href\="\/(en1\/sdownload\/\S+)"/ : /href\="\/(sdownload\/\S+)"/
 
-    var resConvert = await fetch(`${urlBase}${convertRoute}`, {
-        "credentials": "include",
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Sec-GPC": "1",
-            "Upgrade-Insecure-Requests": "1",
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "same-origin",
-            "Sec-Fetch-User": "?1"
-        },
-        "referrer": `${ref}`,
-        "body": durl,
-        "method": "POST",
-        "mode": "cors"
+    var path = await edgeChromium.executablePath || "C:\\\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+    let browser = await puppeteer.launch({
+        executablePath: path,
+        headless: true,
+        ignoreDefaultArgs: ['--disable-extensions']
     });
-    
-    var resText = await resConvert.text();
+    var [page] = await browser.pages();
 
-    const regQ = [...resText.matchAll(new RegExp(/<td>(\d{3,4})<\/td>/, "gi"))].map(a => a["1"]);
-    const regU = [...resText.matchAll(new RegExp(regExU, "gi"))].map(a => a["1"]);
+    await page.goto(`${urlBase}`);
 
-    var urlOfHighest = getHighestQualityURL(regQ, regU);
+    await page.focus("#ytUrl");
+    await page.keyboard.type(url);
+    await page.waitForTimeout(250);
+    await page.click("#convertForm > button");
 
-    var resDL = await fetch(`https://yesdownloader.com/en1/sdownload/qcnAaMraZk9LRbane_ZJZ9iGaronOwn4FnmftUBj_MI/`, {
-        "credentials": "include",
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Sec-GPC": "1",
-            "Upgrade-Insecure-Requests": "1",
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "none",
-            "Sec-Fetch-User": "?1"
-        },
-        "method": "GET",
-        "mode": "cors"
-    });
-    
+    try {
+        await page.waitForSelector("#dtable tbody tr td a[href*=\"sdownload\"]");
+    } catch (error) {
+        browser.close();
+        return res.json({message: "ERROR - Page not loaded correctly!"});
+    }
 
-    console.log(resDL.redirected);
+    let list = await page.evaluate((sel) => {
+        let elements = Array.from(document.querySelectorAll(sel));
+        let links = elements.map(element => {
+            return element.href
+        })
+        return links;
+    }, '#dtable tbody tr td a[href*=\"sdownload\"]');
 
-    var dlText = await resDL.text();
+    if (list.length > 0) {
+        var content = await page.goto(list[list.length - 1]);
+        var text = await content.text();
+        const regS = [...text.matchAll(new RegExp(/<script>[\n](.+)<\/script>/, "g"))];
+        var script = regS[0][1];
 
-    const regS = [...dlText.matchAll(new RegExp(/<script>[\n](.+)<\/script>/, "g"))];
-    var script = regS[0][1];
+        var indexofEnd = script.indexOf("function mJHlA()");
+        var rest = script.substring(0, indexofEnd);
 
-    var indexofEnd = script.indexOf("function mJHlA()");
-    var rest = script.substring(0, indexofEnd);
-
-    var x = eval(rest);
-
-    console.log(x);
+        console.log(eval(rest));
+        browser.close();
+        return;
+    }
+    browser.close();
+    return null;
 
     return res.json({});
 }
