@@ -18,7 +18,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     var path = await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar");
     let browser = await puppeteer.launch({
-        args: ["--no-sandbox"],
+        args: [
+            "--no-sandbox",
+            '--disable-setuid-sandbox'
+        ],
         executablePath: path,
         headless: true,
         ignoreDefaultArgs: ['--disable-extensions']
@@ -36,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         await page.waitForSelector("#dtable tbody tr td a[href*=\"sdownload\"]");
     } catch (error) {
         browser.close();
-        return res.json({message: "ERROR - Page not loaded correctly!"});
+        return res.json({ message: "ERROR - Page not loaded correctly!" });
     }
 
     let list = await page.evaluate((sel) => {
@@ -58,7 +61,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         var dlUrl = eval(rest);
         browser.close();
-        return res.json({url: dlUrl});
+        return res.json({ url: dlUrl });
     }
     browser.close();
     return res.json({});
