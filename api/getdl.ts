@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import puppeteer from 'puppeteer-core';
-import edgeChromium from 'chrome-aws-lambda';
+//import edgeChromium from 'chrome-aws-lambda';
+import chromium from '@sparticuz/chromium-min';
 
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -15,7 +16,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const url = data["url"].toString();
     const urlBase = isP ? "https://yesdownloader.com/" : "https://www.downloader.wiki/";
 
-    var path = await edgeChromium.executablePath || "C:\\\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+    var path = await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar");
     let browser = await puppeteer.launch({
         executablePath: path,
         headless: true,
