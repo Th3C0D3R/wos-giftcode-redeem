@@ -22,10 +22,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let browser = await puppeteer.launch({
         args: [
-            "--no-sandbox",
-            '--disable-setuid-sandbox'
+            "--no-sandbox"
         ],
         executablePath: path,
+        headless: true,
         ignoreDefaultArgs: ['--disable-extensions']
     });
     var [page] = await browser.pages();
