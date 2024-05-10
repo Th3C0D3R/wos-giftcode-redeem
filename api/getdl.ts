@@ -18,6 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     var path = await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar");
     let browser = await puppeteer.launch({
+        args: ["--no-sandbox"],
         executablePath: path,
         headless: true,
         ignoreDefaultArgs: ['--disable-extensions']
