@@ -5,7 +5,7 @@ import chromium from '@sparticuz/chromium-min';
 
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    //return res.json({ message: "WIP" });
+    return res.json({ message: "WIP" });
 
     var data = req.query;
     var isP = false;
