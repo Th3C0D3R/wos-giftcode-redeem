@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import puppeteer, { Browser } from 'puppeteer-core';
+import puppeteer from 'puppeteer-core';
 import edgeChromium from 'chrome-aws-lambda';
 
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    return res.json({ message: "WIP" });
+    //return res.json({ message: "WIP" });
 
     var data = req.query;
     var isP = false;
@@ -54,12 +54,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         var indexofEnd = script.indexOf("function mJHlA()");
         var rest = script.substring(0, indexofEnd);
 
-        console.log(eval(rest));
+        var dlUrl = eval(rest);
         browser.close();
-        return;
+        return res.json({url: dlUrl});
     }
     browser.close();
-    return null;
-
     return res.json({});
 }
