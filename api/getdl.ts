@@ -17,13 +17,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const urlBase = isP ? "https://yesdownloader.com/" : "https://www.downloader.wiki/";
 
     var path = await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar");
+    chromium.setHeadlessMode = "shell";
+    chromium.setGraphicsMode = false;
+
     let browser = await puppeteer.launch({
         args: [
             "--no-sandbox",
             '--disable-setuid-sandbox'
         ],
         executablePath: path,
-        headless: true,
         ignoreDefaultArgs: ['--disable-extensions']
     });
     var [page] = await browser.pages();
