@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import puppeteer from 'puppeteer-core';
-//import edgeChromium from 'chrome-aws-lambda';
 import chromium from '@sparticuz/chromium-min';
 
 
