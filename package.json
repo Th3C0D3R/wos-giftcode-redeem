@@ -1,7 +1,4 @@
 {
-  "scripts": {
-    "build": "npm install . && apt-get install libnss3 libnspr4 libgbm1 && npx playwright install"
-  },
   "repository": "https://github.com/vercel/examples.git",
   "license": "MIT",
   "private": true,
@@ -13,13 +10,13 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
+    "@sparticuz/chromium-min": "^119.0.2",
     "@vercel/analytics": "^1.2.2",
     "@vercel/postgres": "^0.7.2",
     "axios": "^1.6.8",
-    "chrome-aws-lambda": "^10.1.0",
     "discord-interactions": "^3.4.0",
     "md5": "^2.3.0",
-    "playwright-core": "^1.44.1",
+    "puppeteer-core": "^21.11.0",
     "rand-user-agent": "^2.0.54"
   }
 }

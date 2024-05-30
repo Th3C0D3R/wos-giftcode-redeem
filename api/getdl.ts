@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import Chromium from 'chrome-aws-lambda'
-import playwright, { chromium } from 'playwright-core'
+import chromium from '@sparticuz/chromium-min'
+import puppeteer from 'puppeteer-core'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     //return res.json({ message: "WIP" });
@@ -14,11 +14,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const url = data["url"].toString();
     const urlBase = isP ? "https://yesdownloader.com/" : "https://www.downloader.wiki/";
 
-    var path = await Chromium.executablePath;
+    var path = await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar");
     console.log(path);
 
-    let browser = await playwright.chromium.launch({
-        args: [...Chromium.args,
+    let browser = await puppeteer.launch({
+        args: [...chromium.args,
             "--no-sandbox"
         ],
         executablePath: path,
