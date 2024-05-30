@@ -10,13 +10,13 @@
     "xmlhttprequest": "^1.8.0"
   },
   "dependencies": {
-    "@sparticuz/chromium-min": "^123.0.1",
+    "@sparticuz/chromium": "^123.0.1",
     "@vercel/analytics": "^1.2.2",
     "@vercel/postgres": "^0.7.2",
     "axios": "^1.6.8",
     "discord-interactions": "^3.4.0",
     "md5": "^2.3.0",
-    "puppeteer-core": "^22.6.4",
+    "puppeteer": "^22.10.0",
     "rand-user-agent": "^2.0.54"
   }
 }

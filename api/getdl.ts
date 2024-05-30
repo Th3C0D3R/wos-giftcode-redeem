@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium-min';
+import puppeteer from 'puppeteer';
+import chromium from '@sparticuz/chromium';
+import { chown } from 'fs';
 
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -15,8 +16,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const url = data["url"].toString();
     const urlBase = isP ? "https://yesdownloader.com/" : "https://www.downloader.wiki/";
 
-    var path = await chromium.executablePath("https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar");
-    chromium.setGraphicsMode = false;
+    var path = await chromium.executablePath(/*"https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar"*/);
+    console.log(path);
 
     let browser = await puppeteer.launch({
         args: [
