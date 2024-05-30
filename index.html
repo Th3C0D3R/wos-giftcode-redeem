@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Whiteout Survival - Massive Code Redeem</title>
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7609235905619473"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -16,26 +19,26 @@
             var spanSuccess = document.getElementById("success");
             var id = document.getElementById("PlayerID").value;
             fetch("https://wgr.vercel.app/api/sendid?id=" + id).then(res => {
-                res.json().then( x => {
-                    if(x["status"] && x["status"] === 500){
+                res.json().then(x => {
+                    if (x["status"] && x["status"] === 500) {
                         spanSuccess.style["visibility"] = "hidden";
                         spanFail.style["visibility"] = "visible";
                         spanFail.value = x["data"];
                         btn.removeAttribute("disabled");
                     }
-                    else if(x["status"] && x["status"] === 200){
+                    else if (x["status"] && x["status"] === 200) {
                         spanFail.style["visibility"] = "hidden";
                         spanSuccess.style["visibility"] = "visible";
                         spanSuccess.value = x["data"];
                         btn.removeAttribute("disabled");
                     }
-                    else if(x["status"] && x["status"] === 302){
+                    else if (x["status"] && x["status"] === 302) {
                         spanFail.style["visibility"] = "hidden";
                         spanSuccess.style["visibility"] = "visible";
                         spanSuccess.innerText = x["data"];
                         btn.removeAttribute("disabled");
                     }
-                    else{
+                    else {
                         spanSuccess.style["visibility"] = "hidden";
                         spanFail.style["visibility"] = "visible";
                         spanFail.innerText = x["data"];
@@ -44,7 +47,7 @@
                 });
             });
         }
-        
+
     </script>
 
     <h1 style="text-align: center;"><strong>Whiteout Survival - Massive GiftCode Redeem</strong></h1>
@@ -61,7 +64,8 @@
     <h2 style="text-align: center;"><span style="color:red">OR (not both)</span></h2>
     <p>&nbsp;</p>
     <h3 style="text-align: center;">Use the next form to send you ID</h3>
-    <h3 style="text-align: center;">It will automatically be added to the list and as soon as a new giftcode is out (and I start the process)</h3>
+    <h3 style="text-align: center;">It will automatically be added to the list and as soon as a new giftcode is out (and
+        I start the process)</h3>
     <h3 style="text-align: center;">everyone on that List will get the giftcode redeemed</h3>
     <p style="text-align: center;">
         <span id="success" style="visibility: hidden; color: #339966;">ID successfull added!</span>
@@ -72,23 +76,25 @@
         <input type="number" name="PlayerID" access="false" id="PlayerID">
         <button type="button" access="false" id="SendID" onclick="sendID()">Send ID</button>
     </p>
-    
+
     <section id="donate" style="text-align: center;">
-       <h3 data-translate="donate">Donate</h3>
-              <p>
-                  <span data-translate="desc">You like this Site?<br> Support my work and I will be able to upgrade this Site!<br>The upgrade would allow the script to work longer and better than now!</span>
-              </p>
-              <p>
-                  <span class="paypal-link">
-                      <img id="donobutton" src="/images/paypal-donate.png" style="width: 150px; height: 43px;" alt="PayPal Donation">
-                  </span>
-              </p>
-          </section>
+        <h3 data-translate="donate">Donate</h3>
+        <p>
+            <span data-translate="desc">You like this Site?<br> Support my work and I will be able to upgrade this
+                Site!<br>The upgrade would allow the script to work longer and better than now!</span>
+        </p>
+        <p>
+            <span class="paypal-link">
+                <img id="donobutton" src="/images/paypal-donate.png" style="width: 150px; height: 43px;"
+                    alt="PayPal Donation">
+            </span>
+        </p>
+    </section>
     <script>
-    document.getElementById("donobutton").addEventListener('click',function(e){
-    window.open("https://www.paypal.com/donate/?hosted_button_id=6GEJJC4RHRAAW","_blank");
-});
-</script>
+        document.getElementById("donobutton").addEventListener('click', function (e) {
+            window.open("https://www.paypal.com/donate/?hosted_button_id=6GEJJC4RHRAAW", "_blank");
+        });
+    </script>
 </body>
 
 </html>
