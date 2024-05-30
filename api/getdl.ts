@@ -1,8 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import puppeteer from 'puppeteer';
-import chromium from '@sparticuz/chromium';
-import { chown } from 'fs';
-
+import Chromium from 'chrome-aws-lambda'
+import playwright, { chromium } from 'playwright-core'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     //return res.json({ message: "WIP" });
@@ -16,18 +14,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const url = data["url"].toString();
     const urlBase = isP ? "https://yesdownloader.com/" : "https://www.downloader.wiki/";
 
-    var path = await chromium.executablePath(/*"https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar"*/);
+    var path = await Chromium.executablePath;
     console.log(path);
 
-    let browser = await puppeteer.launch({
-        args: [
+    let browser = await playwright.chromium.launch({
+        args: [...Chromium.args,
             "--no-sandbox"
         ],
         executablePath: path,
         headless: true,
         ignoreDefaultArgs: ['--disable-extensions']
     });
-    var [page] = await browser.pages();
+    var page = await browser.newPage();
 
     await page.goto(`${urlBase}`);
 
@@ -44,8 +42,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     let list = await page.evaluate((sel) => {
-        let elements = Array.from(document.querySelectorAll(sel));
-        let links = elements.map(element => {
+        let elements: any = Array.from(document.querySelectorAll(sel));
+        let links = elements.map((element: HTMLAnchorElement) => {
             return element.href
         })
         return links;
@@ -53,16 +51,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (list.length > 0) {
         var content = await page.goto(list[list.length - 1]);
-        var text = await content.text();
-        const regS = [...text.matchAll(new RegExp(/<script>[\n](.+)<\/script>/, "g"))];
-        var script = regS[0][1];
-
-        var indexofEnd = script.indexOf("function mJHlA()");
-        var rest = script.substring(0, indexofEnd);
-
-        var dlUrl = eval(rest);
+        if (content !== null && content !== undefined) {
+            var text = await content.text();
+            const regS = [...text.matchAll(new RegExp(/<script>[\n](.+)<\/script>/, "g"))];
+            var script = regS[0][1];
+    
+            var indexofEnd = script.indexOf("function mJHlA()");
+            var rest = script.substring(0, indexofEnd);
+    
+            var dlUrl = eval(rest);
+            browser.close();
+            return res.json({ url: dlUrl });
+        }
+        
         browser.close();
-        return res.json({ url: dlUrl });
+        return res.json({ message: "ERROR - last Downloadpage not loaded correctly!" });
     }
     browser.close();
     return res.json({});
