@@ -44,6 +44,7 @@
                 });
             });
         }
+        
     </script>
 
     <h1 style="text-align: center;"><strong>Whiteout Survival - Massive GiftCode Redeem</strong></h1>
@@ -71,6 +72,23 @@
         <input type="number" name="PlayerID" access="false" id="PlayerID">
         <button type="button" access="false" id="SendID" onclick="sendID()">Send ID</button>
     </p>
+    
+    <section id="donate">
+       <h3 data-translate="donate">Donate</h3>
+              <p>
+                  <span data-translate="desc">Like this free extension?<br> Every little donation is always welcome. Thank you so much!</span>
+              </p>
+              <p>
+                  <span class="paypal-link">
+                      <img id="donobutton" src="../images/paypal-donate.png" alt="PayPal Donation">
+                  </span>
+              </p>
+          </section>
+    <script>
+    document.getElementById("donobutton").addEventListener('click',function(e){
+    window.open("https://www.paypal.com/donate/?hosted_button_id=6GEJJC4RHRAAW","_blank");
+});
+</script>
 </body>
 
 </html>
