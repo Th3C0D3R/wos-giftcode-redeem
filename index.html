@@ -18,6 +18,13 @@
             var spanFail = document.getElementById("fail");
             var spanSuccess = document.getElementById("success");
             var id = document.getElementById("PlayerID").value;
+            if (id.length <= 0) {
+                spanSuccess.style["visibility"] = "hidden";
+                spanFail.style["visibility"] = "visible";
+                spanFail.value = "Failed to add ID!";
+                btn.removeAttribute("disabled");
+                return;
+            }
             fetch("https://wgr.vercel.app/api/sendid?id=" + id).then(res => {
                 res.json().then(x => {
                     if (x["status"] && x["status"] === 500) {
