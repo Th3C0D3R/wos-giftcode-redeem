@@ -1,0 +1,19 @@
+{
+    "functions": {
+        "api/doList": {
+            "maxDuration": 60
+        },
+        "api/getdl": {
+            "maxDuration": 60
+        },
+        "api/getIDs": {
+            "maxDuration": 60
+        },
+        "api/redeem": {
+            "maxDuration": 60
+        },
+        "api/sendid": {
+            "maxDuration": 60
+        }        
+    }
+}
