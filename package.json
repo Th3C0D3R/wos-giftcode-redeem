@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "npm install . && npx playwright install-deps && npx playwright install"
+    "build": "npm install . && apt-get install libnss3 libnspr4 libgbm1 && npx playwright install"
   },
   "repository": "https://github.com/vercel/examples.git",
   "license": "MIT",
