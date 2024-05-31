@@ -13,15 +13,15 @@ function getPaypalURI() {
 }
 
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function POST(req: VercelRequest, res: VercelResponse) {
     console.log('IPN Notification Event Received');
 
     if (req.method !== 'POST') {
         console.error('Request method not allowed.');
-        res.status(405).send('Method Not Allowed');
+        return res.status(405).send('Method Not Allowed');
     } else {
         console.log('IPN Notification Event received successfully.');
-        res.status(200).end();
+        res.status(200);
     }
 
     const ipnTransactionMessage = req.body;
