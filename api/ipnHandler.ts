@@ -23,12 +23,8 @@ export default async function POST(req: VercelRequest, res: VercelResponse) {
         const config = {
             method: 'POST',
             body: JSON.stringify({
-                "content": `Payment Type: ${req.body["payment_type"]}\n
-            Amount: ${req.body["mc_gross"]}\n
-            Currency: ${req.body["mc_currency"]}\n
-            Payment Date: ${req.body["payment_date"]}\n
-            Custom Message: ${req.body["custom"]}`,
-                username: `${(req.body["test_ipn"] == "1" ? "[TEST]" : "")} ${req.body["payer_email"]}`,
+                "content": `Payment Type: ${req.body["payment_type"]}\nAmount: ${req.body["mc_gross"]}\nCurrency: ${req.body["mc_currency"]}\nPayment Date: ${req.body["payment_date"]}\nCustom Message: ${req.body["custom"]}`,
+                "username": `${(req.body["test_ipn"] == "1" ? "[TEST]" : "")} ${req.body["payer_email"]}`,
             }),
             headers: { 'Content-Type': 'application/json' }
         }
