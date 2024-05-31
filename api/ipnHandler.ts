@@ -10,35 +10,32 @@ export default async function POST(req: VercelRequest, res: VercelResponse) {
     } else {
         console.log('IPN Notification Event received successfully.');
 
-        console.log(req.body);
+        if (req.body["payer_email"] == undefined) return;
+        if (req.body["mc_currency"] == undefined) return;
+        if (req.body["mc_gross"] == undefined) return;
+        //if(req.body["mc_gross_1"] == undefined) return;
+        if (req.body["payment_date"] == undefined) return;
+        //if(req.body["receiver_email"] == undefined) return;
+        if (req.body["payment_type"] == undefined) return;
+        if (req.body["custom"] == undefined) return;
+        if (process.env.WEBHOOK == undefined) return;
 
-        res.status(200).end();
-    }
-
-
-    if(req.body["payer_email"] == undefined) return;
-    if(req.body["mc_currency"] == undefined) return;
-    if(req.body["mc_gross"] == undefined) return;
-    //if(req.body["mc_gross_1"] == undefined) return;
-    if(req.body["payment_date"] == undefined) return;
-    //if(req.body["receiver_email"] == undefined) return;
-    if(req.body["payment_type"] == undefined) return;
-    if(req.body["custom"] == undefined) return;
-    if(process.env.WEBHOOK == undefined) return;
-
-    const config = {
-        method: 'POST',
-        body: JSON.stringify({
-            "content": `Payment Type: ${req.body["payment_type"]}\n
+        const config = {
+            method: 'POST',
+            body: JSON.stringify({
+                "content": `Payment Type: ${req.body["payment_type"]}\n
             Amount: ${req.body["mc_gross"]}\n
             Currency: ${req.body["mc_currency"]}\n
             Payment Date: ${req.body["payment_date"]}\n
             Custom Message: ${req.body["custom"]}`,
-            username: `${(req.body["test_ipn"] == "1" ? "[TEST]" : "")} ${req.body["payer_email"]}`,
-        }),
-        headers: { 'Content-Type': 'application/json' }
+                username: `${(req.body["test_ipn"] == "1" ? "[TEST]" : "")} ${req.body["payer_email"]}`,
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        }
+        await axios(process.env.WEBHOOK, config);
+
+        res.status(200).end();
     }
-    await axios(process.env.WEBHOOK,config);
 }
 /*
 IPN Notification Event Received
