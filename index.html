@@ -25,7 +25,7 @@
                 btn.removeAttribute("disabled");
                 return;
             }
-            fetch("https://wgr.vercel.app/api/sendid?id=" + id).then(res => {
+            fetch(`https://wgr.vercel.app/api/sendid?id=${id}`).then(res => {
                 res.json().then(x => {
                     if (x["status"] && x["status"] === 500) {
                         spanSuccess.style["visibility"] = "hidden";

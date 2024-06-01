@@ -1,10 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { Md5 } from 'ts-md5'
 
-enum CODE {
-  TIMEOUT = "timeout retry.",
-  RECEIVED = "received.",
-  SUCCESS = "success"
+export enum CODE {
+  TIMEOUT = 40004,
+  TIME_ERROR = 40007,
+  RECEIVED = 40008,
+  SUCCESS = 20000,
+  LOGIN_SUCCESS = "success",
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -18,44 +20,44 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   var code = data["code"].toString();
   var msg: object[] = [];
   var log = await login(playerID);
+  console.debug(log)
+  if (log["msg"]?.toLowerCase() !== CODE.LOGIN_SUCCESS) {
 
-  if (log["msg"]?.toLowerCase() !== CODE.SUCCESS) {
-
-    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5 });
+    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5, orgCode: log["code"] });
 
   } else {
 
-    console.log(`${log["data"]["nickname"]} (${log["data"]["fid"]} | ${log["data"]["kid"]})`);
-    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3 });
+    msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3, orgCode: log["code"] });
 
-    var redeem = await redeemCode(playerID, code);
-
-    if (redeem.toLowerCase() === CODE.TIMEOUT) {
-      redeem = await redeemCode(playerID, code);
-      console.log(redeem);
-
-      if (redeem.toLowerCase() === CODE.SUCCESS) {
-        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 1 })
+    var statusCode:number,text:string;
+    [statusCode,text] = await redeemCode(playerID, code);
+    console.debug([statusCode,text]);
+    if (statusCode === CODE.TIMEOUT) {
+      [statusCode,text] = await redeemCode(playerID, code);
+      console.debug([statusCode,text]);
+      if (statusCode === CODE.SUCCESS) {
+        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode })
       }
-      else if (redeem.toLowerCase() === CODE.RECEIVED) {
-        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
+      else if (statusCode === CODE.RECEIVED) {
+        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
       }
       else {
-        msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${redeem}`, code: 5 });
+        msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${text}`, "code": statusCode });
       }
     }
-    else if (redeem.toLowerCase() === CODE.SUCCESS) {
-      msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 2 });
+    else if (statusCode === CODE.SUCCESS) {
+      msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
     }
     else {
-      msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 4 });
+      msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
     }
+    console.log(`${log["data"]["nickname"]} (${log["data"]["fid"]} | ${log["data"]["kid"]}) | Code: ${statusCode}`);
   }
 
   if (useIDList) {
     return res.json({ data: msg });
   }
-  return res.json({ message: msg.map(m => m["text"] ?? "").join("\n") });
+  return res.json({ message: msg.map(m => m["text"] ?? "").join("<br>") });
 
   async function login(id: string): Promise<string> {
     var time = Date.now();
@@ -104,8 +106,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       "method": "POST",
       "mode": "cors"
     });
-    if (response.status !== 200) return "ERROR";
+    if (response.status !== 200) return (CODE.TIMEOUT,response.statusText);
     var resJ = await response.json();
-    return resJ["msg"] ?? resJ["err_code"] ?? "ERROR";
+    return (resJ["err_code"] ?? "ERROR",resJ["msg"]);
   }
 }

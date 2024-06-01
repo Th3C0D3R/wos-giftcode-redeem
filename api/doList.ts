@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { CODE } from './redeem'
 
 interface RedeemResponse { text: string, code: number }
 interface Data { data: RedeemResponse[] }
@@ -16,32 +17,36 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
             reject("NO IDS FOUND");
             return;
         }
-        var ids = [...new Set(resp["ids"])];
+        var ids = Array.from(new Set(resp["ids"]));
         var code = data["code"].toString();
+
+
         for (let i = 0; i < ids.length; i++) {
             let playerID = `${ids[i]}`;
+            console.log(`${i + 1}/${ids.length}`);
             let p = fetchPlayerRedeems<RedeemResponse>(`https://wgr.vercel.app/api/redeem?id=${playerID}&code=${code}&useList=1`);
             proms.add(p);
         }
-        var r:Data[]  = await Promise.all(proms) as Data[];
+        var r: Data[] = await Promise.all(proms) as Data[];
+
+
         var success: RedeemResponse[] = [], failed: RedeemResponse[] = [], received: RedeemResponse[] = [];
         var Debugstring = "";
-        r.forEach(pr=> {
-            var rp: RedeemResponse = pr.data.filter(m=>m["id"] === "redeem")[0] ?? pr.data.filter(m=>m["id"] === "login")[0];
-            if(debug){
+        r.forEach(pr => {
+            var rp: RedeemResponse = pr.data.filter(m => m["id"] === "redeem")[0] ?? pr.data.filter(m => m["id"] === "login")[0];
+            if (debug) {
                 Debugstring += `${JSON.stringify(rp)} ==> ${rp["code"]} ${typeof rp["code"]}<br>`;
             }
             if (isType<RedeemResponse>(rp)) {
                 switch (rp["code"]) {
-                    case 1:
-                    case 2:
+                    case CODE.SUCCESS:
                         success.push(rp);
                         break;
-                    case 4:
+                    case CODE.RECEIVED:
                         received.push(rp);
                         break;
-                    case 3:
-                    case 5:
+                    case CODE.TIMEOUT:
+                    case CODE.TIME_ERROR:
                     default:
                         failed.push(rp);
                         break;
@@ -64,10 +69,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
                 return data;
             }
             console.log(url, response.status);
-            throw new Error(`Network response was not ok for ${url}`);
+            return JSON.parse(JSON.stringify({data:[{text:"error", code: CODE.TIMEOUT}]}));
         } catch (error) {
+            console.error(`Error fetching from ${url}`);
             console.error(error);
-            throw new Error(`Error fetching from ${url}`);
+            return JSON.parse(JSON.stringify({data:[{text:"error", code: CODE.TIMEOUT}]}));
         }
     }
 

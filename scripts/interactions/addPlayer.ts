@@ -4,7 +4,7 @@ export const AddPlayer = async(opt: any)=>{
     const idsString = opt?.options[0]?.value as string ?? "";
     const ids = idsString.split(";") ?? [];
 
-    var result = await fetch("https://wgr.vercel.app/api/sendid?ids=" + JSON.stringify(ids));
+    var result = await fetch(`https://wgr.vercel.app/api/sendid?ids=${JSON.stringify(ids)}`);
     result = await result.json();
 
     return {
