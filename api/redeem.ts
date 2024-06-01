@@ -29,8 +29,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3, orgCode: log["code"] });
 
-    var statusCode:number,text:string;
-    [statusCode,text] = await redeemCode(playerID, code);
+    var [statusCode,text] = await redeemCode(playerID, code);
     console.debug([statusCode,text]);
     if (statusCode === CODE.TIMEOUT) {
       [statusCode,text] = await redeemCode(playerID, code);
@@ -108,6 +107,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
     if (response.status !== 200) return (CODE.TIMEOUT,response.statusText);
     var resJ = await response.json();
-    return (resJ["err_code"] ?? "ERROR",resJ["msg"]);
+    return [resJ["err_code"] ?? "ERROR",resJ["msg"]];
   }
 }
