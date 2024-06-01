@@ -32,6 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (redeem.toLowerCase() === CODE.TIMEOUT) {
       redeem = await redeemCode(playerID, code);
+      console.log(redeem);
 
       if (redeem.toLowerCase() === CODE.SUCCESS) {
         msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${redeem}`, code: 1 })
