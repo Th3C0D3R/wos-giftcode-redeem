@@ -1,4 +1,4 @@
-import { InteractionResponseFlags } from "discord-interactions";
+import { InteractionResponseFlags, InteractionResponseType } from "discord-interactions";
 
 export class ValidationException extends Error {
     public errorType: string;
@@ -20,9 +20,9 @@ export class UnhandledData extends Error{
     }
 }
 
-export function returnError (content:string){
+export function returnInteraction (content:string){
     return {
-        type:4,
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data:{
             content: content, 
             flags: InteractionResponseFlags.EPHEMERAL            

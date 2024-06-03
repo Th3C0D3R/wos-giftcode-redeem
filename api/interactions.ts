@@ -4,7 +4,7 @@ import {
     InteractionResponseType,
     verifyKey
 } from 'discord-interactions'
-import { ValidationException, UnhandledData,returnError } from '../utils/exceptions'
+import { ValidationException, UnhandledData,returnInteraction } from '../utils/exceptions'
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
 import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
@@ -20,7 +20,7 @@ const verifySig = async (body: any, header: IncomingHttpHeaders) => {
 }
 
 const handleResponse = async (body: any) => {
-    const { type, id, data, member } = body;
+    const { type, data, member, application_id, token } = body;
 
     if (type === InteractionType.PING) {
         return { type: InteractionResponseType.PONG };
@@ -35,9 +35,10 @@ const handleResponse = async (body: any) => {
             case "startcode":
                 if (member?.user?.id !== '741313602379841661') {
                     console.log(`Unauthorized trigger of "startCode" with ID: ${member?.user?.id}`);
-                    return returnError(`You have no permission to execute the interaction!`);
+                    return returnInteraction(`You have no permission to execute the interaction!`);
                 }
-                return await StartCode(data);
+                StartCode(data, application_id,token);
+                return returnInteraction(`The process has started...\nA message will send as soon as the process has finished`)
             default:
                 throw new UnhandledData("Unhandled Data", 401);
         }
