@@ -34,6 +34,8 @@ const handleResponse = async (body: any) => {
                 return await getPlayerInfo(data);
             case "startcode":
                 if (user?.id !== '741313602379841661') {
+                    console.log(body);
+                    console.log(user);
                     console.log(`Unauthorized trigger of "startCode" with ID: ${user?.id}`);
                     return returnError(`You have no permission to execute the interaction!`);
                 }
