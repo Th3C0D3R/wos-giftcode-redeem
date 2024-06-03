@@ -2,7 +2,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import {
     InteractionType,
     InteractionResponseType,
-    verifyKey
+    verifyKey,
+    InteractionResponseFlags
 } from 'discord-interactions'
 import { ValidationException, UnhandledData } from '../utils/exceptions'
 import { IncomingHttpHeaders } from 'http'
@@ -19,8 +20,18 @@ const verifySig = async (body: any, header: IncomingHttpHeaders) => {
     }
 }
 
+const returnError = (content) =>{
+    return {
+        type:4,
+        data:{
+            content: content, 
+            flags: InteractionResponseFlags.EPHEMERAL            
+        }
+    }
+}
+
 const handleResponse = async (body: any) => {
-    const { type, id, data } = body;
+    const { type, id, data, user } = body;
 
     if (type === InteractionType.PING) {
         return { type: InteractionResponseType.PONG };
@@ -34,6 +45,9 @@ const handleResponse = async (body: any) => {
             case "playerinfo":
                 return await getPlayerInfo(data);
             case "startcode":
+                if (user?.id !== '741313602379841661') {
+                    return returnError("You have no permission to execute the interaction!");
+                }
                 return await StartCode(data);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
