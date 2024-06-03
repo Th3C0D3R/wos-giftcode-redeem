@@ -20,7 +20,7 @@ const verifySig = async (body: any, header: IncomingHttpHeaders) => {
 }
 
 const handleResponse = async (body: any) => {
-    const { type, id, data, user } = body;
+    const { type, id, data, member } = body;
 
     if (type === InteractionType.PING) {
         return { type: InteractionResponseType.PONG };
@@ -33,10 +33,8 @@ const handleResponse = async (body: any) => {
             case "playerinfo":
                 return await getPlayerInfo(data);
             case "startcode":
-                if (user?.id !== '741313602379841661') {
-                    console.log(body);
-                    console.log(user);
-                    console.log(`Unauthorized trigger of "startCode" with ID: ${user?.id}`);
+                if (member?.user?.id !== '741313602379841661') {
+                    console.log(`Unauthorized trigger of "startCode" with ID: ${member?.user?.id}`);
                     return returnError(`You have no permission to execute the interaction!`);
                 }
                 return await StartCode(data);
