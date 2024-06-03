@@ -1,3 +1,5 @@
+import { InteractionResponseFlags } from "discord-interactions";
+
 export class ValidationException extends Error {
     public errorType: string;
     public status: number;
@@ -15,5 +17,15 @@ export class UnhandledData extends Error{
         super(message);
         this.errorType = "UnhandledData";
         this.status = statusNumber;
+    }
+}
+
+export function returnError (content:string){
+    return {
+        type:4,
+        data:{
+            content: content, 
+            flags: InteractionResponseFlags.EPHEMERAL            
+        }
     }
 }

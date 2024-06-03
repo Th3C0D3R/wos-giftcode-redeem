@@ -2,10 +2,9 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 import {
     InteractionType,
     InteractionResponseType,
-    verifyKey,
-    InteractionResponseFlags
+    verifyKey
 } from 'discord-interactions'
-import { ValidationException, UnhandledData } from '../utils/exceptions'
+import { ValidationException, UnhandledData,returnError } from '../utils/exceptions'
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
 import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
@@ -20,16 +19,6 @@ const verifySig = async (body: any, header: IncomingHttpHeaders) => {
     }
 }
 
-const returnError = (content) =>{
-    return {
-        type:4,
-        data:{
-            content: content, 
-            flags: InteractionResponseFlags.EPHEMERAL            
-        }
-    }
-}
-
 const handleResponse = async (body: any) => {
     const { type, id, data, user } = body;
 
@@ -37,7 +26,6 @@ const handleResponse = async (body: any) => {
         return { type: InteractionResponseType.PONG };
     }
     if (type === InteractionType.APPLICATION_COMMAND) {
-        console.log(body);
         const { name } = data;
         switch (name) {
             case "addplayer":
