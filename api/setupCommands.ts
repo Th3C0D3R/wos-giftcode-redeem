@@ -35,6 +35,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         ]
     }
+    var startCodePayload = {
+        name: "startcode",
+        type: 1,
+        description: 'Run the script to redeem the code',
+        options: [
+            {
+                "name": "giftcode",
+                "description": "the giftcode to redeem",
+                "type": 3,
+                "required": true,
+                "max_length": 6000
+            }
+        ]
+    }
 
     var results = await Promise.all(
         [
@@ -53,6 +67,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     "Authorization": discordHeaders.Authorization
                 },
                 body: JSON.stringify(getPlayerInfoPayload), // body data type must match "Content-Type" header
+            }),
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": discordHeaders.Authorization
+                },
+                body: JSON.stringify(startCodePayload), // body data type must match "Content-Type" header
             })
         ]);
     return res.json(results.map(async r => await r.json()));

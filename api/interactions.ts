@@ -8,6 +8,7 @@ import { ValidationException, UnhandledData } from '../utils/exceptions'
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
 import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
+import { StartCode } from '../scripts/interactions/startCode'
 
 const verifySig = async (body: any, header: IncomingHttpHeaders) => {
     const sig = header["x-signature-ed25519"] as string;
@@ -25,12 +26,15 @@ const handleResponse = async (body: any) => {
         return { type: InteractionResponseType.PONG };
     }
     if (type === InteractionType.APPLICATION_COMMAND) {
+        console.log(body);
         const { name } = data;
         switch (name) {
             case "addplayer":
                 return await AddPlayer(data);
             case "playerinfo":
                 return await getPlayerInfo(data);
+            case "startcode":
+                return await StartCode(data);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
         }
