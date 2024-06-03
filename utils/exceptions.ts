@@ -29,3 +29,9 @@ export function returnInteraction (content:string){
         }
     }
 }
+
+export function returnAckn (){
+    return {
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+    }
+}
