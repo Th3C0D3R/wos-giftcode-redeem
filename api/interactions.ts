@@ -37,7 +37,8 @@ const handleResponse = async (body: any) => {
                     return returnInteraction(`You have no permission to execute the interaction!`);
                 }
                 var giftcode = data?.options[0]?.value as string ?? "";
-                fetch(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`);
+                console.log(`\nhttps://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}\n`);
+                //fetch(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`);
                 return returnAckn(`The process has started...\nA message will send as soon as the process has finished`);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
