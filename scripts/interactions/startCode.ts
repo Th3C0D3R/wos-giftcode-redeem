@@ -1,14 +1,16 @@
-import { returnInteraction } from '../../utils/exceptions'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-export const StartCode = async (opt: any, app_id: any, token: any) => {
-    const giftcode = opt?.options[0]?.value as string ?? "";
-    if (giftcode == "") {
-        return returnInteraction("You did not provide a GiftCode")
-    }
+export default async function handler(req: VercelRequest, res: VercelResponse){
+    var data = req.query;
+    if (data["code"] === undefined) return res.json({ message: "NO CODE" });
+    if (data["app"] === undefined) return res.json({ message: "NO application_id" });
+    if (data["token"] === undefined) return res.json({ message: "NO token" });
+    const giftcode = data["code"] ?? "";
+    const appID = data["app"] ?? "";
+    const token = data["token"] ?? "";
     var result = await fetch(`https://wgr.vercel.app/api/doList?code=${giftcode}`);
     var redeemResult = await result.text();
-    console.log(app_id,token);
-    await fetch(process.env.WEBHOOK_PRIV as string, {
+    await fetch(`https://discord.com/api/v10/webhooks/${appID}/${token}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -17,4 +19,7 @@ export const StartCode = async (opt: any, app_id: any, token: any) => {
             content: redeemResult
         })
     });
+}
+export const StartCode = async (opt: any) => {
+    
 }
