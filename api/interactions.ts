@@ -38,7 +38,7 @@ const handleResponse = async (body: any) => {
                     return returnInteraction(`You have no permission to execute the interaction!`);
                 }
                 StartCode(data, application_id,token);
-                return returnAckn();//`The process has started...\nA message will send as soon as the process has finished`
+                return returnAckn(`The process has started...\nA message will send as soon as the process has finished`);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
         }

@@ -10,28 +10,32 @@ export class ValidationException extends Error {
     }
 }
 
-export class UnhandledData extends Error{
+export class UnhandledData extends Error {
     public errorType: string;
     public status: number;
-    constructor(public message: string, public statusNumber: number){
+    constructor(public message: string, public statusNumber: number) {
         super(message);
         this.errorType = "UnhandledData";
         this.status = statusNumber;
     }
 }
 
-export function returnInteraction (content:string){
+export function returnInteraction(content: string) {
     return {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data:{
-            content: content, 
-            flags: InteractionResponseFlags.EPHEMERAL            
+        data: {
+            content: content,
+            flags: InteractionResponseFlags.EPHEMERAL
         }
     }
 }
 
-export function returnAckn (){
+export function returnAckn(content: string) {
     return {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+            content: content,
+            flags: InteractionResponseFlags.EPHEMERAL
+        }
     }
 }
