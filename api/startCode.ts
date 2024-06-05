@@ -2,9 +2,11 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 export default async function handler(req: VercelRequest, res: VercelResponse){
     var data = req.query;
+    console.log(data);
     if (data["code"] === undefined) return res.json({ message: "NO CODE" });
     if (data["app"] === undefined) return res.json({ message: "NO application_id" });
     if (data["token"] === undefined) return res.json({ message: "NO token" });
+    console.log(0);
     const giftcode = data["code"] ?? "";
     const appID = data["app"] ?? "";
     const token = data["token"] ?? "";
