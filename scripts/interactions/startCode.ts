@@ -8,10 +8,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
     const giftcode = data["code"] ?? "";
     const appID = data["app"] ?? "";
     const token = data["token"] ?? "";
+    console.log(1);
     var result = await fetch(`https://wgr.vercel.app/api/doList?code=${giftcode}`);
+    console.log(2);
     var redeemResult = await result.text();
-    await fetch(`https://discord.com/api/v10/webhooks/${appID}/${token}`, {
-        method: 'POST',
+    console.log(3);
+    await fetch(`https://discord.com/api/v10/webhooks/${appID}/${token}/messages/@original`, {
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -19,7 +22,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse){
             content: redeemResult
         })
     });
-}
-export const StartCode = async (opt: any) => {
-    
+    console.log(4);
 }

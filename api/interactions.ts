@@ -8,7 +8,6 @@ import { ValidationException, UnhandledData,returnInteraction, returnAckn } from
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
 import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
-import { StartCode } from '../scripts/interactions/startCode'
 
 const verifySig = async (body: any, header: IncomingHttpHeaders) => {
     const sig = header["x-signature-ed25519"] as string;
@@ -38,7 +37,9 @@ const handleResponse = async (body: any) => {
                     return returnInteraction(`You have no permission to execute the interaction!`);
                 }
                 var giftcode = data?.options[0]?.value as string ?? "";
-                fetch(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`)
+                console.log("before Fetch StartCode");
+                fetch(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`);
+                console.log("after Fetch StartCode");
                 return returnAckn(`The process has started...\nA message will send as soon as the process has finished`);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
@@ -49,7 +50,9 @@ const handleResponse = async (body: any) => {
 export default async function POST(req: VercelRequest, res: VercelResponse) {
     try {
         await verifySig(req.body, req.headers);
-        res.json(await handleResponse(req.body));
+        var resJSON = await handleResponse(req.body);
+        console.log("after handleResponse");
+        res.json(resJSON);
     } catch (e: any) {
         console.error("Error found: ", e?.message);
         if (e.errorType === "Validation" || e.errorType === "UnhandledData") {

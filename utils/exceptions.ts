@@ -32,7 +32,7 @@ export function returnInteraction(content: string) {
 
 export function returnAckn(content: string) {
     return {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
             content: content,
             flags: InteractionResponseFlags.EPHEMERAL
