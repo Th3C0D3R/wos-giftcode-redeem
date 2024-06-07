@@ -20,7 +20,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   var code = data["code"].toString();
   var msg: object[] = [];
   var log = await login(playerID);
-  console.debug(log)
   if (log["msg"]?.toLowerCase() !== CODE.LOGIN_SUCCESS) {
 
     msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5, orgCode: log["code"] });

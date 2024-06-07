@@ -1,13 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import {
-    InteractionType,
-    InteractionResponseType,
-    verifyKey
-} from 'discord-interactions'
+import { InteractionType, InteractionResponseType, verifyKey } from 'discord-interactions'
 import { ValidationException, UnhandledData,returnInteraction, returnAckn, sleep } from '../utils/utils'
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
 import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
+import axios from 'axios'
 
 const verifySig = async (body: any, header: IncomingHttpHeaders) => {
     const sig = header["x-signature-ed25519"] as string;
@@ -37,7 +34,7 @@ const handleResponse = async (body: any) => {
                     return returnInteraction(`You have no permission to execute the interaction!`);
                 }
                 var giftcode = data?.options[0]?.value as string ?? "";
-                fetch(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`);
+                axios(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`);
                 await sleep(2500);
                 return returnAckn(`The process has started...\nA message will send as soon as the process has finished`);
             default:
