@@ -4,7 +4,7 @@ import {
     InteractionResponseType,
     verifyKey
 } from 'discord-interactions'
-import { ValidationException, UnhandledData,returnInteraction, returnAckn } from '../utils/exceptions'
+import { ValidationException, UnhandledData,returnInteraction, returnAckn, sleep } from '../utils/utils'
 import { IncomingHttpHeaders } from 'http'
 import { AddPlayer } from '../scripts/interactions/addPlayer'
 import { getPlayerInfo } from '../scripts/interactions/getPlayerInfo'
@@ -39,6 +39,7 @@ const handleResponse = async (body: any) => {
                 var giftcode = data?.options[0]?.value as string ?? "";
                 //console.log(`\nhttps://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}\n`);
                 fetch(`https://wgr.vercel.app/api/startCode?code=${giftcode}&app=${application_id}&token=${token}`);
+                await sleep(1500);
                 return returnAckn(`The process has started...\nA message will send as soon as the process has finished`);
             default:
                 throw new UnhandledData("Unhandled Data", 401);
