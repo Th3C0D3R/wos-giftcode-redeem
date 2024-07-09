@@ -10,11 +10,9 @@ export enum CODE {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  var useIDList = false;
   var data = req.query;
   if (data["code"] === undefined) return res.json({ message: "NO CODE" });
-  if (data["useList"] !== undefined) useIDList = true;
-  if (data["id"] === undefined && useIDList == false) return res.json({ message: "NO PLAYERID" });
+  if (data["id"] === undefined) return res.json({ message: "NO PLAYERID" });
 
   var playerID = data["id"].toString();
   var code = data["code"].toString();
@@ -28,11 +26,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3, orgCode: log["code"] });
 
-    var [statusCode,text] = await redeemCode(playerID, code);
-    console.debug([statusCode,text]);
+    var [statusCode, text] = await redeemCode(playerID, code);
+    console.debug([statusCode, text]);
     if (statusCode === CODE.TIMEOUT) {
-      [statusCode,text] = await redeemCode(playerID, code);
-      console.debug([statusCode,text]);
+      [statusCode, text] = await redeemCode(playerID, code);
+      console.debug([statusCode, text]);
       if (statusCode === CODE.SUCCESS) {
         msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode })
       }
@@ -52,9 +50,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`${log["data"]["nickname"]} (${log["data"]["fid"]} | ${log["data"]["kid"]}) | Code: ${statusCode}`);
   }
 
-  if (useIDList) {
-    return res.json({ data: msg });
-  }
   return res.json({ message: msg.map(m => m["text"] ?? "").join("<br>") });
 
   async function login(id: string): Promise<string> {
@@ -104,8 +99,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       "method": "POST",
       "mode": "cors"
     });
-    if (response.status !== 200) return (CODE.TIMEOUT,response.statusText);
+    if (response.status !== 200) return (CODE.TIMEOUT, response.statusText);
     var resJ = await response.json();
-    return [resJ["err_code"] ?? "ERROR",resJ["msg"]];
+    return [resJ["err_code"] ?? "ERROR", resJ["msg"]];
   }
 }
