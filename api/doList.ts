@@ -7,6 +7,7 @@ interface Data { data: RedeemResponse[] }
 export default function handler(req: VercelRequest, res: VercelResponse) {
     var data = req.query;
     var debug = false
+    if (data === undefined) return res.json({ message: "NO DATA" });
     if (data["debug"] !== undefined) debug = true;
     if (data["code"] === undefined) return res.json({ message: "NO CODE" });
     const myPromise = new Promise(async (resolve, reject) => {
@@ -33,6 +34,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         var success: RedeemResponse[] = [], failed: RedeemResponse[] = [], received: RedeemResponse[] = [];
         var Debugstring = "";
         r.forEach(pr => {
+            if(pr === undefined) return;
             var rp: RedeemResponse = pr.data.filter(m => m["id"] === "redeem")[0] ?? pr.data.filter(m => m["id"] === "login")[0];
             if (debug) {
                 Debugstring += `${JSON.stringify(rp)} ==> ${rp["code"]} ${typeof rp["code"]}<br>`;
