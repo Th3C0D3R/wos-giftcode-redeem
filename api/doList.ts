@@ -36,6 +36,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         r.forEach(pr => {
             if(pr === undefined) return;
             var rp: RedeemResponse = pr.data.filter(m => m["id"] === "redeem")[0] ?? pr.data.filter(m => m["id"] === "login")[0];
+            if(rp === undefined || rp["code"] === undefined) return;
             if (debug) {
                 Debugstring += `${JSON.stringify(rp)} ==> ${rp["code"]} ${typeof rp["code"]}<br>`;
             }
