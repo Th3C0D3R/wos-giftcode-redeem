@@ -33,9 +33,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         for (let i = 0; i < ids.length; i++) {
             let playerID = `${ids[i]}`;
             console.log(`${i + 1}/${ids.length}`);
-            let p = (await doRedeem(playerID, code)) as Data;
-            r.push(p);
+            let p = doRedeem(playerID, code);
+            proms.add(p);
         }
+
+        var r: Data[] = await Promise.all(proms) as Data[];
 
         var success: RedeemResponse[] = [], failed: RedeemResponse[] = [], received: RedeemResponse[] = [];
         var Debugstring = "";
