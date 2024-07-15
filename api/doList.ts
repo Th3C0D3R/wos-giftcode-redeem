@@ -32,7 +32,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         var r: Data[] = [];
         for (let i = 0; i < ids.length; i++) {
             let playerID = `${ids[i]}`;
-            console.log(`${i + 1}/${ids.length}`); 
+            //console.log(`${i + 1}/${ids.length}`); 
             proms.add(doRedeem(playerID, code));
         }
 
@@ -74,9 +74,10 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
 
     function doRedeem(playerID: string, code: string) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve, _) => {
             var msg: object[] = [];
             var log = await login(playerID);
+            console.log(log);
             if (log["msg"]?.toLowerCase() !== CODE.LOGIN_SUCCESS) {
 
                 msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5, orgCode: log["code"] });
@@ -165,11 +166,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
                 "method": "POST",
                 "mode": "cors"
             });
-            if (response.status !== 200) return (CODE.TIMEOUT, response.statusText);
+            if (response.status !== 200) return [CODE.TIMEOUT, response.statusText];
             var resJ = await response.json();
             return [resJ["err_code"] ?? "ERROR", resJ["msg"]];
         } catch (error) {
-            return (CODE.TIME_ERROR, error);
+            return [CODE.TIME_ERROR, error];
         }
 
     }
