@@ -32,9 +32,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         var r: Data[] = [];
         for (let i = 0; i < ids.length; i++) {
             let playerID = `${ids[i]}`;
-            console.log(`${i + 1}/${ids.length}`);
-            let p = doRedeem(playerID, code);
-            proms.add(p);
+            console.log(`${i + 1}/${ids.length}`); 
+            proms.add(doRedeem(playerID, code));
         }
 
         var r: Data[] = await Promise.all(proms) as Data[];
@@ -74,43 +73,46 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const isType = <Type>(thing: any): thing is Type => true;
 
 
-    async function doRedeem(playerID: string, code: string) {
-        var msg: object[] = [];
-        var log = await login(playerID);
-        if (log["msg"]?.toLowerCase() !== CODE.LOGIN_SUCCESS) {
+    function doRedeem(playerID: string, code: string) {
+        return new Promise(async (resolve, reject) => {
+            var msg: object[] = [];
+            var log = await login(playerID);
+            if (log["msg"]?.toLowerCase() !== CODE.LOGIN_SUCCESS) {
 
-            msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5, orgCode: log["code"] });
+                msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 5, orgCode: log["code"] });
 
-        } else {
+            } else {
 
-            msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3, orgCode: log["code"] });
+                msg.push({ id: "login", text: `Login ${playerID}: ${log["msg"] ?? "ERROR"}`, code: 3, orgCode: log["code"] });
 
-            var [statusCode, text] = await redeemCode(playerID, code);
-            console.debug([statusCode, text]);
-            if (statusCode === CODE.TIMEOUT) {
-                [statusCode, text] = await redeemCode(playerID, code);
+                var [statusCode, text] = await redeemCode(playerID, code);
                 console.debug([statusCode, text]);
-                if (statusCode === CODE.SUCCESS) {
-                    msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode })
+                if (statusCode === CODE.TIMEOUT) {
+                    [statusCode, text] = await redeemCode(playerID, code);
+                    console.debug([statusCode, text]);
+                    if (statusCode === CODE.SUCCESS) {
+                        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode })
+                    }
+                    else if (statusCode === CODE.RECEIVED) {
+                        msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
+                    }
+                    else {
+                        msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${text}`, "code": statusCode });
+                    }
                 }
-                else if (statusCode === CODE.RECEIVED) {
+                else if (statusCode === CODE.SUCCESS) {
                     msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
                 }
                 else {
-                    msg.push({ id: "redeem", text: `2. Try Redeem ${code} for ${playerID}: ${text}`, "code": statusCode });
+                    msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
                 }
+                console.log(`${log["data"]["nickname"]} (${log["data"]["fid"]} | ${log["data"]["kid"]}) | Code: ${statusCode}`);
             }
-            else if (statusCode === CODE.SUCCESS) {
-                msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
-            }
-            else {
-                msg.push({ id: "redeem", text: `Redeemed ${code} for ${playerID}: ${text}`, "code": statusCode });
-            }
-            console.log(`${log["data"]["nickname"]} (${log["data"]["fid"]} | ${log["data"]["kid"]}) | Code: ${statusCode}`);
-        }
 
-        return { data: msg };
+            return resolve({ data: msg });
+        });
     }
+
     async function login(id: string): Promise<string> {
         try {
             var time = Date.now();
