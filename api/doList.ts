@@ -112,54 +112,64 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         return { data: msg };
     }
     async function login(id: string): Promise<string> {
-        var time = Date.now();
-        var sig1 = Md5.hashStr(`fid=${id}&time=${time}tB87#kPtkxqOS2`);
-        var response = await fetch("https://wos-giftcode-api.centurygame.com/api/player", {
-            "credentials": "omit",
-            "headers": {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
-                "Accept": "application/json, text/plain, */*",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Sec-Fetch-Dest": "empty",
-                "Sec-Fetch-Mode": "cors",
-                "Sec-Fetch-Site": "same-site",
-                "Sec-GPC": "1",
-                "Pragma": "no-cache",
-                "Cache-Control": "no-cache"
-            },
-            "referrer": "https://wos-giftcode.centurygame.com/",
-            "body": `sign=${sig1}&fid=${id}&time=${time}`,
-            "method": "POST",
-            "mode": "cors"
-        });
-        if (response.status !== 200) return "ERROR";
-        var resJ = await response.json();
-        return resJ ?? "ERROR";
+        try {
+            var time = Date.now();
+            var sig1 = Md5.hashStr(`fid=${id}&time=${time}tB87#kPtkxqOS2`);
+            var response = await fetch("https://wos-giftcode-api.centurygame.com/api/player", {
+                "credentials": "omit",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
+                    "Accept": "application/json, text/plain, */*",
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-site",
+                    "Sec-GPC": "1",
+                    "Pragma": "no-cache",
+                    "Cache-Control": "no-cache"
+                },
+                "referrer": "https://wos-giftcode.centurygame.com/",
+                "body": `sign=${sig1}&fid=${id}&time=${time}`,
+                "method": "POST",
+                "mode": "cors"
+            });
+            if (response.status !== 200) return "ERROR";
+            var resJ = await response.json();
+            return resJ ?? "ERROR";
+        } catch (error) {
+            return error;
+        }
+
     }
     async function redeemCode(id: string, code: string) {
-        var time = Date.now();
-        var sig2 = Md5.hashStr(`cdk=${code}&fid=${id}&time=${time}tB87#kPtkxqOS2`);
-        var response = await fetch("https://wos-giftcode-api.centurygame.com/api/gift_code", {
-            "credentials": "omit",
-            "headers": {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
-                "Accept": "application/json, text/plain, */*",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Sec-GPC": "1",
-                "Sec-Fetch-Dest": "empty",
-                "Sec-Fetch-Mode": "cors",
-                "Sec-Fetch-Site": "same-site"
-            },
-            "referrer": "https://wos-giftcode.centurygame.com/",
-            "body": `sign=${sig2}&fid=${id}&cdk=${code}&time=${time}`,
-            "method": "POST",
-            "mode": "cors"
-        });
-        if (response.status !== 200) return (CODE.TIMEOUT, response.statusText);
-        var resJ = await response.json();
-        return [resJ["err_code"] ?? "ERROR", resJ["msg"]];
+        try {
+            var time = Date.now();
+            var sig2 = Md5.hashStr(`cdk=${code}&fid=${id}&time=${time}tB87#kPtkxqOS2`);
+            var response = await fetch("https://wos-giftcode-api.centurygame.com/api/gift_code", {
+                "credentials": "omit",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+                    "Accept": "application/json, text/plain, */*",
+                    "Accept-Language": "en-US,en;q=0.5",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Sec-GPC": "1",
+                    "Sec-Fetch-Dest": "empty",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Site": "same-site"
+                },
+                "referrer": "https://wos-giftcode.centurygame.com/",
+                "body": `sign=${sig2}&fid=${id}&cdk=${code}&time=${time}`,
+                "method": "POST",
+                "mode": "cors"
+            });
+            if (response.status !== 200) return (CODE.TIMEOUT, response.statusText);
+            var resJ = await response.json();
+            return [resJ["err_code"] ?? "ERROR", resJ["msg"]];
+        } catch (error) {
+            return (CODE.TIME_ERROR, error);
+        }
+
     }
 }
 
